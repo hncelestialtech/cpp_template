@@ -1,0 +1,39 @@
+name: Update Changelog
+
+on:
+  push:
+    tags:
+      - 'v*'
+jobs:
+  update-changelog:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: read
+
+    name: Generate Release
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Generate Changelog
+        uses: pfandie/generate-changelog-action@v1
+        id: changelog
+        with:
+          next_tag: ${{ github.ref_name }}
+          config_path: ".chglog"
+          output_file: ""
+      
+      - name: Get Changelog content
+        run: echo "::workflow-command parameter1=${{steps.changelog.outputs.changelog}}"
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1.12.0
+        with:
+          makeLatest: true
+          token: ${{ github.token }}
+          body: ${{ steps.changelog.outputs.changelog }}
+          name: "Release ${{ github.ref_name }}"
