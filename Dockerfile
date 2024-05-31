@@ -1,17 +1,19 @@
 FROM centos:7
-#RUN microdnf install -y yum
 RUN yum -y install epel-release
 RUN yum -y install ninja-build
-
-RUN yum -y install wget
 
 RUN yum -y install centos-release-scl-rh
 RUN yum -y install devtoolset-11
 RUN yum -y install python3-devel
-RUN pip3 install conan
-RUN yum -y install gcc gcc-c++ openssl openssl-devel
-RUN wget https://github.com/Kitware/CMake/releases/download/v3.23.0/cmake-3.23.0.tar.gz
-RUN tar -xvzf cmake-3.23.0.tar.gz
-WORKDIR /cmake-3.23.0
-RUN ./bootstrap && make -j4 && make install
+RUN yum -y install perl-Data-Dumper
+RUN pip3 install scikit-build --upgrade
+RUN pip3 install conan --upgrade
+RUN pip3 install pip --upgrade
+RUN pip3 install cmake --upgrade
 
+# For Conan build all
+RUN yum groupinstall -y 'Development Tools'
+RUN yum install -y perl-Digest-SHA
+
+RUN yum install -y dnf
+RUN yum install -y rh-python38
