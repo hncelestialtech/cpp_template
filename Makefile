@@ -10,17 +10,18 @@ IS_CENTOS := $(shell grep -q "centos" /etc/os-release && echo "yes" || echo "no"
 
 # Conditional source command based on OS
 ifeq ($(IS_CENTOS),yes)
-    ENABLE_GCC = source /opt/rh/devtoolset-11/enable
+    ENABLE_ENV = source scl_source enable devtoolset-11 && source scl_source enable rh-python38
+
 else
-    ENABLE_GCC = @echo "Not sourcing devtoolset-11 on non-Linux OS"
+    ENABLE_ENV = @echo "Not sourcing devtoolset-11 on non-Linux OS"
 endif
 
 
 setup:
-	$(ENABLE_GCC) && \
+	$(ENABLE_ENV) && \
 	conan profile detect --force && \
-	conan install . --output-folder=build --build=missing && \
-	cmake -G Ninja --preset conan-release
+	conan install . --output-folder=build --build=b2 --build=missing && \
+	cmake -G Ninja --preset conan-release -DCMAKE_CXX_COMPILER=/opt/rh/devtoolset-11/root/usr/bin/g++
 
 # Function to setup and build a directory
 define build_target

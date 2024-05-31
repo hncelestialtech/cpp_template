@@ -1,19 +1,19 @@
-FROM rockylinux:8-minimal
+FROM centos:7
+RUN yum -y install epel-release
+RUN yum -y install ninja-build
 
-RUN microdnf install -y yum
-RUN microdnf install -y dnf
-RUN dnf -y install gcc-toolset-11
-
+RUN yum -y install centos-release-scl-rh
+RUN yum -y install devtoolset-11
 RUN yum -y install python3-devel
+RUN yum -y install perl-Data-Dumper
+RUN pip3 install scikit-build --upgrade
 RUN pip3 install conan --upgrade
-RUN yum -y install cmake
+RUN pip3 install pip --upgrade
+RUN pip3 install cmake --upgrade
 
-# Used by Openssl
-RUN yum -y install perl
-RUN yum -y install dnf-plugins-core
-RUN dnf -y --enablerepo=devel install ninja-build
-RUN yum -y install gdb
-RUN echo "source scl_source enable gcc-toolset-11" >> ~/.bashrc
-RUN echo "source scl_source enable gcc-toolset-11" >> ~/.bash_profile
+# For Conan build all
+RUN yum groupinstall -y 'Development Tools'
+RUN yum install -y perl-Digest-SHA
 
-RUN ln -s /opt/rh/gcc-toolset-11/root/usr/bin/g++ /usr/local/bin/g++
+RUN yum install -y dnf
+RUN yum install -y rh-python38
